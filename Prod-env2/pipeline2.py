@@ -46,7 +46,9 @@ def main():
 
 
     # window aggregations on the stream 
-    stream_count_df =stream_df.withWatermark("datetime", "2 minutes").groupBy(window("datetime",  "1 minutes")).agg({"sales_quantity":"sum","sales_total_price":"sum","analytics_clicks":"sum","analytics_impressions":"sum"})   
+    stream_count_df =stream_df.withWatermark("datetime", "2 minutes") \
+                                   .groupBy(window("datetime",  "1 minutes")) \
+                                      .agg({"sales_quantity":"sum","sales_total_price":"sum","analytics_clicks":"sum","analytics_impressions":"sum"})   
 
     #writing the stream and checking on the console
     stream_df_query = stream_count_df.writeStream.outputMode("complete").format("console").option("checkpointLocation", "data/parquet_files/checkpoint_path").start()
