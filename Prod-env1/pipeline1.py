@@ -44,10 +44,9 @@ def main():
     print(os.environ['HADOOP_HOME'])
 
     spark= SparkSession.builder.appName("spark project").getOrCreate()
-
     spark.sparkContext.setLogLevel('ERROR')
     
-    
+    #Here the schema of the incoming streaming data is defined
     structureSchema = StructType([
         StructField('datetime', StringType(), True),
         StructField('sales', StructType([
@@ -60,13 +59,10 @@ def main():
              ]))        
      ])
 
-   
 
 
-
-
-
-    stream_df = spark\
+   #reading the stream 
+   stream_df = spark\
                 .readStream\
                 .format("json") \
                 .schema(structureSchema) \
@@ -81,7 +77,11 @@ def main():
 
     print("after showing schema")
     print(os.path.abspath(os.curdir)+"/data/csv_files")
+      
+    #flattening the json  
     df_flatten= flatten(stream_df)
+   
+    #writing the stream to csv files
     stream_df_query = df_flatten.writeStream.format("csv").option("header","true").option("format", "append").option("path","data/csv_files").option("checkpointLocation", "data/csv_files/checkpoint_path").outputMode("append").start()
    #  stream_df_query = df_flatten.writeStream.outputMode("append").format("console").option("checkpointLocation", "streaming-checkpoint-loc-json").trigger(processingTime="10 second").start()
 
