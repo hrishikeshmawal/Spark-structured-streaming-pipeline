@@ -7,7 +7,7 @@ We have deployed the pipeline into two different environments (```Prod-env1 and 
 
 For Prod-env1, the following is expected:
 
-*  The pipeline reads JSON files as a stream from data directory. The JSON file will be generated once the main.py file is run.
+*  The pipeline reads JSON files as a stream from data directory.The JSON file will be generated once the main.py file is run.
 *  It processes and flattens the data.
 *  It stores it as CSV files in data directory.
 
