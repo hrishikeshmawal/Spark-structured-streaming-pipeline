@@ -18,6 +18,7 @@ def main():
 
     spark= SparkSession.builder.appName("spark project").getOrCreate()
 
+    #defining the schema of the incoming sreaming data
     structureSchema = StructType([ StructField('datetime', TimestampType(), True), 
                          StructField('sales_quantity', LongType(), True),
                          StructField('sales_total_price', DoubleType(), True),
@@ -26,10 +27,7 @@ def main():
 
 
 
-
-
-
-
+    #reading the stream from pipeline1 output
     stream_df = spark \
                 .readStream \
                 .format("csv") \
@@ -48,15 +46,13 @@ def main():
 
 
 
-    # stream_count_df =stream_df.select(sum("sales_quantity"),sum("sales_total_price"),sum("analytics_clicks"),sum("analytics_impressions"),window("datetime", "1 minutes"))
+    # window aggregations on the stream 
     stream_count_df =stream_df.withWatermark("datetime", "2 minutes").groupBy(window("datetime",  "1 minutes")).agg({"sales_quantity":"sum","sales_total_price":"sum","analytics_clicks":"sum","analytics_impressions":"sum"})   
 
-    
+    #writing the stream and checking on the console
     stream_df_query = stream_count_df.writeStream.outputMode("complete").format("console").option("checkpointLocation", "data/parquet_files/checkpoint_path").start()
     
-    # stream_df_query = stream_count_df.writeStream.format("parquet").outputMode("complete").option("path","data/parquet_files").option("checkpointLocation", "data/parquet_files/checkpoint_path").trigger(processingTime="10 second").start()
-    # stream_df_query = stream_count_df.writeStream.option("checkpointLocation", "data/parquet_files/checkpoint_path").format("parquet").toTable("newTable").outputMode("complete").option("path","data/parquet_files").start()
-    
+   
    
     stream_df_query.awaitTermination()
 
