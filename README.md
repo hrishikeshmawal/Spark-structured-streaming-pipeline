@@ -2,7 +2,7 @@
 
 In this project a streaming pipeline is developed that listens to some data sources and dumps the data into storage. 
 
-We have deployed the pipeline into two different environments ("""Prod-env1 and Prod-env2"""). 
+We have deployed the pipeline into two different environments (```Prod-env1 and Prod-env2```). 
 
 
 For Prod-env1, the following is expected:
